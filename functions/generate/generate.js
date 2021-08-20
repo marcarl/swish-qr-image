@@ -14,27 +14,24 @@ exports.handler = async function (event) {
         };
     }
 
-    const pngBase64Image = await swishQr.sync({
+    const pngBase64Image = await swishQr({
         number: params.number,
         amount: params.amount,
         message: params.message,
         lock: ['number', 'amount', 'message'],
     });
 
-    console.log(pngBase64Image);
-
-    /*
     const img = Buffer.from(
-        pngBase64Image.substr('data:image/png;base64,'.length), 'base64');
-    */
+        pngBase64Image.substr('image/png;data:base64,'.length), 'base64');
+    const body = pngBase64Image.replace('image/png;data:base64,', '');
 
     return {
         statusCode: 200,
         headers: {
             'Content-Type': 'image/png',
-            // 'Content-Length': img.length
+            'Content-Length': img.length
         },
-        body: pngBase64Image,
+        body: img.toString("base64"),
         isBase64Encoded: true
     };
 }
